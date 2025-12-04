@@ -35,10 +35,10 @@ public abstract class AuditableAbstractAggregateRoot<T extends AbstractAggregate
 
     /**
      * Timestamp indicating when the entity was created.
-     * It is non-nullable and not updatable.
+     * It is non-nullable. Note: updatable=false removed to allow UPSERT strategy for Telemetry.
      */
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Date createdAt;
 
     /**
@@ -48,4 +48,10 @@ public abstract class AuditableAbstractAggregateRoot<T extends AbstractAggregate
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
+
+    /**
+     * Overwrites the creation timestamp. Used for UPSERT telemetry updates to simulate latest sample time.
+     * NOTE: Use cautiously; changes auditing semantics.
+     */
+    protected void overwriteCreatedAt(Date newDate) { this.createdAt = newDate; }
 }
